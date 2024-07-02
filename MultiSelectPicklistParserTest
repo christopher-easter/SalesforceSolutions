@@ -1,0 +1,100 @@
+@isTest
+private class MultiSelectPicklistParserTest {
+    
+    @isTest
+    static void testNullInput() {
+        List<String> input = null;
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(1, result.size(), 'Should return a list with one element');
+        System.assertEquals(0, result[0].size(), 'The inner list should be empty');
+    }
+    
+    @isTest
+    static void testEmptyInput() {
+        List<String> input = new List<String>();
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(1, result.size(), 'Should return a list with one element');
+        System.assertEquals(0, result[0].size(), 'The inner list should be empty');
+    }
+    
+    @isTest
+    static void testSingleEmptyValue() {
+        List<String> input = new List<String>{''};
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(1, result.size(), 'Should return a list with one element');
+        System.assertEquals(0, result[0].size(), 'The inner list should be empty');
+    }
+    
+    @isTest
+    static void testSingleValue() {
+        List<String> input = new List<String>{'Value1'};
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(1, result.size(), 'Should return a list with one element');
+        System.assertEquals(1, result[0].size(), 'The inner list should have one element');
+        System.assertEquals('Value1', result[0][0], 'The value should be Value1');
+    }
+    
+    @isTest
+    static void testMultipleValues() {
+        List<String> input = new List<String>{'Value1;Value2;Value3'};
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(1, result.size(), 'Should return a list with one element');
+        System.assertEquals(3, result[0].size(), 'The inner list should have three elements');
+        System.assertEquals('Value1', result[0][0], 'First value should be Value1');
+        System.assertEquals('Value2', result[0][1], 'Second value should be Value2');
+        System.assertEquals('Value3', result[0][2], 'Third value should be Value3');
+    }
+    
+    @isTest
+    static void testBulkOperation() {
+        List<String> input = new List<String>{
+            'Value1;Value2',
+            'Value3;Value4;Value5',
+            '',
+            'SingleValue'
+        };
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(4, result.size(), 'Should return a list with four elements');
+        System.assertEquals(2, result[0].size(), 'First inner list should have two elements');
+        System.assertEquals(3, result[1].size(), 'Second inner list should have three elements');
+        System.assertEquals(0, result[2].size(), 'Third inner list should be empty');
+        System.assertEquals(1, result[3].size(), 'Fourth inner list should have one element');
+    }
+    
+    @isTest
+    static void testMixedNullAndValidInputs() {
+        List<String> input = new List<String>{
+            null,
+            'Value1;Value2',
+            '',
+            'SingleValue'
+        };
+        Test.startTest();
+        List<List<String>> result = MultiSelectPicklistParser.parseMultiSelect(input);
+        Test.stopTest();
+        
+        System.assertEquals(4, result.size(), 'Should return a list with four elements');
+        System.assertEquals(0, result[0].size(), 'First inner list should be empty (null input)');
+        System.assertEquals(2, result[1].size(), 'Second inner list should have two elements');
+        System.assertEquals(0, result[2].size(), 'Third inner list should be empty (empty string input)');
+        System.assertEquals(1, result[3].size(), 'Fourth inner list should have one element');
+    }
+}
