@@ -1,0 +1,22 @@
+public class MultiSelectPicklistParser {
+    @InvocableMethod(label='Parse Multi-Select Picklist' description='Parses a multi-select picklist string into a collection of individual values')
+    public static List<List<String>> parseMultiSelect(List<String> multiSelectValues) {
+        List<List<String>> results = new List<List<String>>();
+        
+        if (multiSelectValues == null || multiSelectValues.isEmpty()) {
+            results.add(new List<String>());
+            return results;
+        }
+        
+        for (String multiSelectValue : multiSelectValues) {
+            if (String.isBlank(multiSelectValue)) {
+                results.add(new List<String>());
+            } else {
+                List<String> individualValues = multiSelectValue.split(';');
+                results.add(individualValues);
+            }
+        }
+        
+        return results;
+    }
+}
